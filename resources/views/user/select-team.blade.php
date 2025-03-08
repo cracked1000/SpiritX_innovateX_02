@@ -4,8 +4,8 @@
     @csrf
 
     <div id="budget-container">
-        <p>Current Budget: <span id="remaining-budget">{{ auth()->user()->budget }}</span> (Original: 9,000,000)</p>
         <p>Total Selected Value: <span id="total-value">0</span></p>
+        <p id="selected-values"></p> <!-- Debug output -->
     </div>
 
     <h3>Batsmen (Select 1)</h3>
@@ -88,8 +88,6 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function() {
-        const initialBudget = {{ auth()->user()->budget }};
-        let remainingBudget = initialBudget;
         let totalValue = 0;
 
         function updateOptions() {
@@ -125,21 +123,28 @@
                 }
             });
 
-            remainingBudget = initialBudget - totalValue;
-            $('#remaining-budget').text(remainingBudget);
             $('#total-value').text(totalValue);
+
+            // Show selected values for debug
+            let selectedValuesText = '';
+            $('select[required]').each(function() {
+                const val = $(this).val();
+                if (val) {
+                    const value = $(this).find(`option[value="${val}"]`).data('value') || 0;
+                    selectedValuesText += $(this).attr('id') + ': ' + value + ' | ';
+                }
+            });
+            $('#selected-values').text('Selected Values: ' + selectedValuesText);
 
             // Validate selection (1 Batsman, 6 Bowlers, 4 All-Rounders)
             const batsmenCount = $('select[id^="batsman_"]').filter(function() { return $(this).val() !== ""; }).length;
             const bowlersCount = $('select[id^="bowler_"]').filter(function() { return $(this).val() !== ""; }).length;
             const allRoundersCount = $('select[id^="all_rounder_"]').filter(function() { return $(this).val() !== ""; }).length;
-            const isValidSelection = batsmenCount === 1 && bowlersCount === 6 && allRoundersCount === 4 && remainingBudget >= 0;
+            const isValidSelection = batsmenCount === 1 && bowlersCount === 6 && allRoundersCount === 4;
 
             $('#saveTeamBtn').prop('disabled', !isValidSelection);
             if (batsmenCount !== 1 || bowlersCount !== 6 || allRoundersCount !== 4) {
                 $('#saveTeamBtn').prop('title', 'Must select exactly 1 Batsman, 6 Bowlers, and 4 All-Rounders');
-            } else if (remainingBudget < 0) {
-                $('#saveTeamBtn').prop('title', 'Budget exceeded');
             } else {
                 $('#saveTeamBtn').prop('title', '');
             }

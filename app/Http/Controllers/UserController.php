@@ -74,12 +74,12 @@ public function saveTeam(Request $request)
         'bowler_2' => 'required|exists:players,id',
         'bowler_3' => 'required|exists:players,id',
         'bowler_4' => 'required|exists:players,id',
+        'bowler_5' => 'required|exists:players,id',
+        'bowler_6' => 'required|exists:players,id',
         'all_rounder_1' => 'required|exists:players,id',
         'all_rounder_2' => 'required|exists:players,id',
         'all_rounder_3' => 'required|exists:players,id',
         'all_rounder_4' => 'required|exists:players,id',
-        'all_rounder_5' => 'required|exists:players,id',
-        'all_rounder_6' => 'required|exists:players,id',
     ]);
 
     // Collect all selected player IDs
@@ -89,12 +89,12 @@ public function saveTeam(Request $request)
         $request->input('bowler_2'),
         $request->input('bowler_3'),
         $request->input('bowler_4'),
+        $request->input('bowler_5'),
+        $request->input('bowler_6'),
         $request->input('all_rounder_1'),
         $request->input('all_rounder_2'),
         $request->input('all_rounder_3'),
         $request->input('all_rounder_4'),
-        $request->input('all_rounder_5'),
-        $request->input('all_rounder_6'),
     ];
 
     // Check for duplicates
@@ -102,23 +102,10 @@ public function saveTeam(Request $request)
         return redirect()->back()->withErrors(['team' => 'Cannot select the same player twice. Please choose unique players for all positions.']);
     }
 
-    // Calculate total value of selected players
-    $selectedPlayers = Player::whereIn('id', $selectedPlayerIds)->get();
-    $totalValue = $selectedPlayers->sum('value');
-
-    // Check if user has enough budget
-    if ($totalValue > $user->budget) {
-        return redirect()->back()->withErrors(['budget' => 'Selected players exceed your budget of ' . $user->budget]);
-    }
-
     // Save the team to user_players pivot table
     $user->players()->sync($selectedPlayerIds);
 
-    // Deduct the total value from the user's budget
-    $user->budget -= $totalValue;
-    $user->save();
-
-    return redirect()->route('dashboard')->with('success', 'Team successfully saved with 11 unique players!');
+    return redirect()->route('user.dashboard')->with('success', 'Team successfully saved with 11 unique players!');
 }
     public function dashboard()
     {

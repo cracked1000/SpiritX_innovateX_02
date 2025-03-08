@@ -32,5 +32,5 @@ Route::middleware('auth')->group(function () {
     Route::get('/leaderboard', [UserController::class, 'leaderboard'])->name('user.leaderboard');
     Route::get('/select-team', [UserController::class, 'selectTeam'])->name('user.select-team');
     Route::post('/save-team', [UserController::class, 'saveTeam'])->name('user.save-team');
-    Route::get('/dashboard', [UserController::class, 'dashboard'])->name('dashboard');
+    Route::get('/dashboard', [UserController::class, 'dashboard'])->name('user.dashboard');
 });

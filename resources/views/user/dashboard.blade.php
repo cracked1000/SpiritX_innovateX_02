@@ -19,7 +19,9 @@
     @endif
 @endif
 
-<p>Remaining Budget: {{ $user->budget }}</p>
-
 <a href="{{ route('user.select-team') }}">Change Team</a>
-<a href="{{ route('logout') }}">Logout</a>
+
+<form method="POST" action="{{ route('logout') }}" style="display: inline;">
+    @csrf
+    <button type="submit">Logout</button>
+</form>
