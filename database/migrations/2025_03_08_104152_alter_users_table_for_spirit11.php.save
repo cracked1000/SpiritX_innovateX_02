@@ -1,0 +1,27 @@
+
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class AlterUsersTableForSpirit11 extends Migration
+{
+    public function up()
+    {
+        Schema::table('users', function (Blueprint $table) {
+            // Drop columns we don’t need
+            $table->dropColumn(['name', 'email', 'email_verified_at', 'remember_token']);
+            // Add custom columns
+            $table->string('username')->unique()->after('id');
+            $table->boolean('is_admin')->default(false)->after('password');
+            $table->decimal('budget', 15, 2)->default(9000000)->after('is_admin');
+        });
+    }
+
+    public function down()
+    {
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('name')->after('id');
+            $table->string('email')->unique()->after('name');
+            $table->timestamp('email_verified_at')->nullable()->after('email');
+            $table->strin
