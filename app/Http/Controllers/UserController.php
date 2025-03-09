@@ -134,7 +134,7 @@ public function leaderboard()
         $user->budget = $initialBudget - $totalValue; // Update budget
         $user->save();
 
-        return redirect()->route('user.dashboard')->with('success', 'Team saved successfully!');
+        return redirect()->route('user.dashboard');
     }
 
     // Other methods remain unchanged for this correction
